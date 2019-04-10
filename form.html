@@ -1,107 +1,87 @@
-<form id="getContent">
+<form id="webData">
     <div class="input-group">
-        <input type="text" class="form-control" placeholder="URL"
-            aria-label="URL" aria-describedby="URL" name="address"
-            id="txtAddress">
+        <input v-model="url" type="text" class="form-control"
+            placeholder="URL" aria-label="URL" aria-describedby="URL">
         <div class="input-group-append">
-            <button class="btn btn-primary" type="submit">取得</button>
+            <button v-on:click="getContent" class="btn btn-primary"
+                type="button">取得</button>
         </div>
     </div>
+
     <div class="input-group">
-        <input type="text" class="form-control"
+        <input v-model="query" type="text" class="form-control"
             placeholder="Query Selecter" aria-label="query-selecter"
-            aria-describedby="query-selecter" id="txtQuery">
+            aria-describedby="query-selecter">
         <div class="input-group-append">
-            <button class="btn btn-primary" type="button"
-                id="btnSetOriginal">抽出</button>
+            <button v-on:click="setOriginal" class="btn btn-primary"
+                type="button">抽出</button>
         </div>
     </div>
-</form>
-<form id="getTranslation">
-    <div class="form-group">
-        <div class="row">
-            <div class="col">
-                <textarea class="form-control" id="txtOriginal"
-                    name="original" rows="10" placeholder="Original"></textarea>
-            </div>
-            <div class="col">
-                <textarea class="form-control" name="contents"
-                    id="txtTranslated" rows="10"
-                    placeholder="Translated"></textarea>
-            </div>
+    <div class="form-row">
+        <div class="col">
+            <textarea v-model="original" class="form-control" rows="10"
+                placeholder="Original"></textarea>
         </div>
-        <button type="button" class="btn btn-primary" id="btnClear">クリア</button>
-        <button type="submit" class="btn btn-primary">翻訳</button>
+        <div class="col">
+            <textarea v-model="translation" class="form-control"
+                rows="10" placeholder="Translated"></textarea>
+        </div>
     </div>
+    <button v-on:click="clear" type="button" class="btn btn-primary">クリア</button>
+    <button v-on:click="getTranslation" type="button"
+        class="btn btn-primary">翻訳</button>
 </form>
 <div id="output"></div>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script>
-	function setContent(response) {
-		var div = document.getElementById('output');
-		div.innerHTML = response;
-	}
+	var webData = new Vue({
+		el : "#webData",
+		data : {
+			url : null,
+			query : null,
+			original : null,
+			translation : null
+		},
+		methods : {
+			errorTerminate : function(error) {
+				window.alert(error.message);
+			},
+			setContent : function(response) {
+				var output = document.getElementById("output");
+				output.innerHTML = response;
+			},
+			getContent : function() {
+				google.script.run.withSuccessHandler(this.setContent)
+						.withFailureHandler(this.errorTerminate).getContent(
+								this.url);
+			},
+			getOriginal : function() {
+				var contents = document.querySelectorAll(this.query);
+				return contents;
+			},
+			setOriginal : function() {
+				var contents = this.getOriginal();
 
-	function setTranslation(response) {
-		var translated = document.getElementById('txtTranslated');
-		translated.value = response;
-	}
-
-	function setOriginal() {
-		var query = document.getElementById("txtQuery").value;
-		var elements = document.querySelectorAll(query);
-		var original = document.getElementById("txtOriginal");
-
-		for (var i = 0; i < elements.length; i++) {
-			original.value += elements[i].textContent + "\n\n";
+				for (var i = 0; i < contents.length; i++) {
+					this.original += contents[i].textContent + "\r\n\r\n";
+				}
+			},
+			setTranslation : function(response) {
+				this.translation = response;
+			},
+			getTranslation : function() {
+				google.script.run.withSuccessHandler(this.setTranslation)
+						.withFailureHandler(this.errorTerminate)
+						.getTranslation(this.original);
+			},
+			clear : function() {
+				this.url = null;
+				this.query = null;
+				this.original = null;
+				this.translation = null;
+				var output = document.getElementById("output");
+				output.innerHTML = null;
+			}
 		}
-	}
-
-	function clear() {
-		var address = document.getElementById("txtAddress");
-		var query = document.getElementById("txtQuery");
-		var original = document.getElementById("txtOriginal");
-		var translated = document.getElementById("txtTranslated");
-		var htmlOutput = document.getElementById("output");
-
-		address.value = null;
-		query.value = null;
-		original.value = null;
-		translated.value = null;
-		htmlOutput.innerHTML = null;
-	}
-
-	function getContent(objForm) {
-		google.script.run.withSuccessHandler(setContent).getContent(objForm);
-	}
-
-	function getTranslation(objForm) {
-		google.script.run.withSuccessHandler(setTranslation).getTranslation(
-				objForm);
-	}
-
-	function preventFormSubmit() {
-		var content = document.getElementById('getContent');
-
-		content.addEventListener("submit", function(event) {
-			event.preventDefault();
-		});
-
-		content.setAttribute("onsubmit", "getContent(this)");
-
-		var btnOriginal = document.getElementById("btnSetOriginal");
-		btnOriginal.addEventListener("click", setOriginal);
-
-		var btnClear = document.getElementById("btnClear");
-		btnClear.addEventListener("click", clear);
-
-		var translation = document.getElementById("getTranslation");
-
-		translation.addEventListener("submit", function(event) {
-			event.preventDefault();
-		});
-
-		translation.setAttribute("onsubmit", "getTranslation(this)");
-	}
-
-	window.addEventListener('load', preventFormSubmit);
+	});
 </script>

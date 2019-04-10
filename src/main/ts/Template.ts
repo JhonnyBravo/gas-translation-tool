@@ -14,7 +14,7 @@ function includeHtml(fileName: string): string {
  * @param {Object} parameters パラメータとしてテンプレートファイルへ渡すオブジェクトを指定する。
  * @return {any} content 指定したファイルの HTML 文字列を返す。
  */
-function includeTemplate(fileName: string, parameters: Object): any {
+function includeTemplate(fileName: string, parameters: {}): any {
     const response: any = HtmlService.createTemplateFromFile(fileName);
 
     if (parameters !== undefined) {
