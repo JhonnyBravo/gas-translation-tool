@@ -1,27 +1,50 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <base target="_top">
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    
+
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-  </head>
-  <body>
+</head>
+
+<body>
+    <header>
+        <navbar id="navbar" v-bind:brand="brand" v-bind:links="links"></navbar>
+    </header>
     <div class="container">
-      <header>
-        <?!= includeTemplate("navbar", parameters);?>
-      </header>
-      <section>
-        <?!= includeTemplate("form");?>
-      </section>
+        <section id="app">
+            <form>
+                <single-input v-bind:id="url.id" v-bind:label="url.label" v-model="url.value"></single-input>
+                <single-input v-bind:id="selector.id" v-bind:label="selector.label" v-model="selector.value"></single-input>
+                <button type="button" class="btn btn-primary" v-on:click="getHtml">Fetch Page</button>
+                <button type="button" class="btn btn-primary" v-on:click="getSource">Get Source</button>
+                <div class="row">
+                    <multiple-input class="col" v-bind:id="source.id" v-bind:label="source.label" v-bind:rows="source.rows" v-model="source.value"></multiple-input>
+                    <multiple-input class="col" v-bind:id="translation.id" v-bind:label="translation.label" v-bind:rows="translation.rows" v-model="translation.value"></multiple-input>
+                </div>
+                <button type="button" class="btn btn-primary" v-on:click="getTranslation">Translate</button>
+                <button type="button" class="btn btn-primary" v-on:click="clear">Clear</button>
+            </form>
+            <div id="htmlOutput"></div>
+        </section>
     </div>
     <!-- Optional JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <!-- Template -->
+    <?!= includeTemplate("navbar_template");?>
+    <?!= includeTemplate("single_input_template");?>
+    <?!= includeTemplate("multiple_input_template");?>
+    <!-- Main -->
+    <?!= includeTemplate("main");?>
+    <?!= includeTemplate("navbar", parameters);?>
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-  </body>
+</body>
+
 </html>
