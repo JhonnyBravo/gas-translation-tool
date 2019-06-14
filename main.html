@@ -1,0 +1,89 @@
+<script>
+    new Vue({
+        el: "#app",
+        components: {
+            "single-input": singleInput,
+            "multiple-input": multipleInput
+        },
+        data: {
+            url: {
+                id: "url",
+                label: "URL",
+                value: null
+            },
+            selector: {
+                id: "selector",
+                label: "Query Selector",
+                value: null
+            },
+            source: {
+                id: "source",
+                label: "Source",
+                value: null,
+                rows: 5
+            },
+            translation: {
+                id: "translation",
+                label: "Translation",
+                value: null,
+                rows: 5
+            },
+            html: null
+        },
+        watch: {
+            html: function() {
+                var output = document.getElementById("htmlOutput");
+                output.innerHTML = this.html;
+            }
+        },
+        methods: {
+            clear: function() {
+                this.url.value = null;
+                this.selector.value = null;
+                this.source.value = null;
+                this.translation.value = null;
+                this.html = null;
+            },
+            errorHandler: function(error) {
+                window.alert(error.description);
+            },
+            setHtml: function(response) {
+                this.html = response;
+            },
+            getHtml: function() {
+                if (this.url.value == null || this.url.value == "") {
+                    window.alert("URL を入力してください。");
+                    return;
+                }
+
+                google.script.run.withFailureHandler(this.errorHandler).withSuccessHandler(this.setHtml).getContent(this.url.value);
+            },
+            getSource: function() {
+                if (this.selector.value == null || this.selector.value == "") {
+                    window.alert("Query Selector を入力してください。");
+                    return;
+                }
+
+                var elements = document.querySelectorAll(this.selector.value);
+                var contents = [];
+
+                for (var i = 0; i < elements.length; i++) {
+                    contents.push(elements[i].textContent);
+                }
+
+                this.source.value = contents.join("\n\n");
+            },
+            setTranslation: function(response) {
+                this.translation.value = response;
+            },
+            getTranslation: function() {
+                if (this.source.value == null || this.source.value == "") {
+                    window.alert("Source を入力してください。");
+                    return;
+                }
+
+                google.script.run.withFailureHandler(this.errorHandler).withSuccessHandler(this.setTranslation).getTranslation(this.source.value);
+            }
+        }
+    });
+</script>
