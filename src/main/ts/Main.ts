@@ -1,5 +1,10 @@
 function doGet() {
-    const parameters = new QueryParameters();
+    const baseUrl: string = ScriptApp.getService().getUrl();
+    const parameters = {
+        brand: { url: baseUrl, label: "Translation Tool" },
+        links: [{ url: baseUrl, label: "Home" }]
+    };
+
     const response: any = HtmlService.createTemplateFromFile("index");
 
     response.parameters = parameters;
