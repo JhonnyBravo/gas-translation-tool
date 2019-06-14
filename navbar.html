@@ -1,8 +1,26 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="<?= parameters.baseUrl;?>">Translation Tool</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse"
-        data-target="#navbarNav" aria-controls="navbarNav"
-        aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-</nav>
+<script>
+    var nav = new Vue({
+        el: "#navbar",
+        components: {
+            "navbar": navbar
+        },
+        data: {
+            brand: {
+                url: null,
+                label: null
+            },
+            links: []
+        }
+    });
+
+    nav.brand.url = <?= parameters.brand.url; ?> ;
+    nav.brand.label = <?= parameters.brand.label; ?> ; 
+    <? for (var i = 0; i < parameters.links.length; i++) { ?>
+        var link = {
+            url: <?= parameters.links[i].url; ?> ,
+            label : <?= parameters.links[i].label; ?>
+        };
+        
+        nav.links.push(link); 
+    <? } ?>
+</script>
